@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - colectable
+  - TRAP
+  - mori
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Ground
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: fundal
+    uniqueID: 3243052261
+    locked: 0
+  - name: fundal2
+    uniqueID: 3671586429
+    locked: 0
+  - name: fundal3
+    uniqueID: 4221790903
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: copaci
+    uniqueID: 967989333
+    locked: 0
+  - name: terain
+    uniqueID: 3323496201
+    locked: 0
