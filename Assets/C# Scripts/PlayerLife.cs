@@ -5,13 +5,14 @@ public class PlayerLife : MonoBehaviour
 {
     private Rigidbody2D rb;
     private Animator anim;
-
+    
     [SerializeField] private AudioSource deathSoundEffect;
 
     public int maxHealth = 100;
     private int currentHealth;
-
-    // Time in seconds before health reset
+    
+    public ScreenFlash screenFlash;
+    
     public float resetTime = 5f;
     private float timeSinceLastDamage = 0f;
 
@@ -19,17 +20,17 @@ public class PlayerLife : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        screenFlash = GetComponent<ScreenFlash>();
         currentHealth = maxHealth;
     }
 
     private void Update()
     {
-        // Update the timer
         timeSinceLastDamage += Time.deltaTime;
-
-        // Check if it's time to reset health
-        if (timeSinceLastDamage >= resetTime)
+        
+        if (timeSinceLastDamage >= resetTime && currentHealth != 100)
         {
+            screenFlash.FlashGreen();
             ResetHealth();
         }
     }
@@ -54,7 +55,6 @@ public class PlayerLife : MonoBehaviour
         else
         {
             anim.SetTrigger("hurt");
-            // Reset the timer when the player takes damage
             timeSinceLastDamage = 0f;
         }
     }

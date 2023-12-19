@@ -10,6 +10,7 @@ public class Enemy_behivour : MonoBehaviour
     public float moveSpeed;
     public float timer;
     public Transform enemyAttackPoint; 
+    public ScreenFlash screenFlash;
 
     private RaycastHit2D hit;
     private GameObject target;
@@ -23,12 +24,18 @@ public class Enemy_behivour : MonoBehaviour
     private bool isUnderPlayerAttack = false;
     [SerializeField] private AudioSource attackSound;
 
+    
     void Awake()
     {
         intTimer = timer;
         anim = GetComponent<Animator>();
     }
 
+    void Start()
+    {
+        screenFlash = GetComponent<ScreenFlash>();
+    }
+    
     void Update()
     {
         if (inRange)
@@ -134,13 +141,11 @@ public class Enemy_behivour : MonoBehaviour
     {
         cooling = true;
     }
-
-    // Animation event to trigger the attack method
+    
     public void TriggerAttack()
     {
         if (inRange)
         {
-            // Check if the player is in range and invoke TakeDamage with the desired damage amount
             if (enemyAttackPoint != null && distance <= attackDistance)
             {
                 PlayerLife playerLife = target.GetComponent<PlayerLife>();
@@ -148,6 +153,7 @@ public class Enemy_behivour : MonoBehaviour
                 {
                     // Take damage from enemy attacks
                     attackSound.Play();
+                    screenFlash.FlashRed();
                     playerLife.TakeDamage(20);
                 }
             }

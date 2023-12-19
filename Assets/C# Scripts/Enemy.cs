@@ -33,11 +33,7 @@ public class Enemy : MonoBehaviour
 
         if (raycastChild != null)
         {
-            // Destroy the child GameObject
             Destroy(raycastChild.gameObject);
-
-            // If you want to destroy it after a delay (e.g., 2 seconds), you can use Destroy with a delay parameter
-            // Destroy(raycastChild.gameObject, 2f);
         }
         else
         {

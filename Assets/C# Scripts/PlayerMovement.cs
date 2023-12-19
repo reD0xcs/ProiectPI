@@ -21,8 +21,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private AudioSource jumpSoundEffect;
     [SerializeField] private AudioSource runSoundEffect;
     
-    
-    // Start is called before the first frame update
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -30,8 +28,7 @@ public class PlayerMovement : MonoBehaviour
         sprite = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
     }
-
-    // Update is called once per frame
+    
     private void Update()
     {
         dirX = Input.GetAxisRaw("Horizontal");
@@ -150,6 +147,4 @@ public class PlayerMovement : MonoBehaviour
             isPlayingSound = false;
         }
     }
-
 }
-

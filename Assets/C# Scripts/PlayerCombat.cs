@@ -42,7 +42,6 @@ public class PlayerCombat : MonoBehaviour
 
             foreach (Collider2D enemy in hitEnemies)
             {
-                // Check if the enemy has the Enemy component
                 Enemy enemyComponent = enemy.GetComponent<Enemy>();
                 if (enemyComponent != null)
                 {
@@ -50,7 +49,6 @@ public class PlayerCombat : MonoBehaviour
                 }
                 else
                 {
-                    // Log a warning if the enemy doesn't have the required component
                     Debug.LogWarning("Enemy object is missing the Enemy component.");
                 }
             }
