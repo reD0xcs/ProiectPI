@@ -1,94 +1,96 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private Rigidbody2D rb;
-    private BoxCollider2D coll;
-    private SpriteRenderer sprite;
-    private Animator anim;
-    private float dirX = 0f;
-    private bool isPlayingSound = false;
-    private bool isGrounded = false;
-    private bool wasGrounded = false;
+    #region Private Variables
+
+    private Rigidbody2D _rb;
+    private BoxCollider2D _coll;
+    private SpriteRenderer _sprite;
+    private Animator _anim;
+    private float _dirX;
+    private bool _isPlayingSound = false;
+    private bool _isGrounded = false;
+    private bool _wasGrounded = false;
     [SerializeField] private LayerMask jumpableGround;
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private float jumpForce = 14f;
-    
-    private enum MovementState { idle, running, jumping, falling }
-
     [SerializeField] private AudioSource jumpSoundEffect;
     [SerializeField] private AudioSource runSoundEffect;
+
+    #endregion
+    
+    private enum MovementState { Idle, Running, Jumping, Falling }
     
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        coll = GetComponent<BoxCollider2D>();
-        sprite = GetComponent<SpriteRenderer>();
-        anim = GetComponent<Animator>();
+        _rb = GetComponent<Rigidbody2D>();
+        _coll = GetComponent<BoxCollider2D>();
+        _sprite = GetComponent<SpriteRenderer>();
+        _anim = GetComponent<Animator>();
     }
     
     private void Update()
     {
-        dirX = Input.GetAxisRaw("Horizontal");
-        rb.velocity = new Vector2(dirX * moveSpeed, rb.velocity.y);
+        _dirX = Input.GetAxisRaw("Horizontal");
+        _rb.velocity = new Vector2(_dirX * moveSpeed, _rb.velocity.y);
 
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
             jumpSoundEffect.Play();
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            _rb.velocity = new Vector2(_rb.velocity.x, jumpForce);
         }
 
         UpdateAnimationState();
         
-        if (IsGrounded() && !wasGrounded && dirX != 0 && !isPlayingSound)
+        if (IsGrounded() && !_wasGrounded && _dirX != 0 && !_isPlayingSound)
         {
             StartCoroutine(PlayRunSound());
         }
 
-        wasGrounded = IsGrounded();
+        _wasGrounded = IsGrounded();
     }
 
 
     private void UpdateAnimationState()
     {
         MovementState state;
-        if (dirX > 0f)
+        if (_dirX > 0f)
         {
-            if (!isPlayingSound)
+            if (!_isPlayingSound)
             {
                 StartCoroutine(PlayRunSound());
             }
 
-            state = MovementState.running;
-            sprite.flipX = false;
+            state = MovementState.Running;
+            _sprite.flipX = false;
         }
-        else if (dirX < 0f)
+        else if (_dirX < 0f)
         {
-            if (!isPlayingSound)
+            if (!_isPlayingSound)
             {
                 StartCoroutine(PlayRunSound());
             }
 
-            state = MovementState.running;
-            sprite.flipX = true;
+            state = MovementState.Running;
+            _sprite.flipX = true;
         }
         else
         {
-            state = MovementState.idle;
+            state = MovementState.Idle;
         }
 
-        if (rb.velocity.y > .1f)
+        if (_rb.velocity.y > .1f)
         {
-            state = MovementState.jumping;
+            state = MovementState.Jumping;
         }
-        else if (rb.velocity.y < -0.1f)
+        else if (_rb.velocity.y < -0.1f)
         {
-            state = MovementState.falling;
+            state = MovementState.Falling;
         }
         
-        anim.SetInteger("state", (int)state);
+        _anim.SetInteger("state", (int)state);
     }
 
     private bool IsGrounded()
@@ -97,11 +99,11 @@ public class PlayerMovement : MonoBehaviour
         float boxCastDistance = 0.2f;  
 
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, raycastDistance, jumpableGround);
-        bool isGroundedRaycast = hit.collider != null;
-
+        bool isGroundedRaycast = !object.ReferenceEquals(hit.collider, null);
+        
         bool isGroundedBoxCast = Physics2D.BoxCast(
-            coll.bounds.center, 
-            coll.bounds.size, 
+            _coll.bounds.center, 
+            _coll.bounds.size, 
             0f, 
             Vector2.down, 
             boxCastDistance, 
@@ -130,21 +132,21 @@ public class PlayerMovement : MonoBehaviour
         {
             if (contact.normal.y > groundedThreshold)
             {
-                isGrounded = grounded;
+                _isGrounded = grounded;
                 return;
             }
         }
 
-        isGrounded = false;
+        _isGrounded = false;
     }
     IEnumerator PlayRunSound()
     {
         if (IsGrounded())
         {
-            isPlayingSound = true;
+            _isPlayingSound = true;
             runSoundEffect.Play();
             yield return new WaitForSeconds(runSoundEffect.clip.length);
-            isPlayingSound = false;
+            _isPlayingSound = false;
         }
     }
 }

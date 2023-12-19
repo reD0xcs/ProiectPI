@@ -1,65 +1,69 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour
 {
-    private Animator anim;
-    private Transform attackPoint;
-    private int attackDamage = 40;
-    private float attackRate = 2.0f;
-    private float nextAttackTime = 0f;
+    #region Public Variables
+
     public float attackRange = 2.05f;
     public LayerMask enemyLayers;
+
+    #endregion
+
+    #region Private Variables
+
+    private Animator _anim;
+    private Transform _attackPoint;
+    private int _attackDamage = 40;
+    private float _attackRate = 2.0f;
+    private float _nextAttackTime = 0f;
     [SerializeField] private AudioSource attackSound;
+
+    #endregion
     
     private void Start()
     {
-        anim = GetComponent<Animator>();
-        attackPoint = GetComponent<Transform>();
+        _anim = GetComponent<Animator>();
+        _attackPoint = GetComponent<Transform>();
     }
 
     void Update()
     {
-        if (Time.time >= nextAttackTime)
+        if (Time.time >= _nextAttackTime)
         {
             if (Input.GetMouseButtonDown(0))
             {
                 Attack();
-                nextAttackTime = Time.time + 1f / attackRate;
+                _nextAttackTime = Time.time + 1f / _attackRate;
             }
         }
     }
+    
+    void Attack()
+    {
+        _anim.SetTrigger("Attack");
+        attackSound.Play();
 
-        
-        void Attack()
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(_attackPoint.position, attackRange, enemyLayers);
+
+        foreach (Collider2D enemy in hitEnemies)
         {
-            anim.SetTrigger("Attack");
-            attackSound.Play();
-
-            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-
-            foreach (Collider2D enemy in hitEnemies)
+            Enemy enemyComponent = enemy.GetComponent<Enemy>();
+            if (enemyComponent != null)
             {
-                Enemy enemyComponent = enemy.GetComponent<Enemy>();
-                if (enemyComponent != null)
-                {
-                    enemyComponent.takeDamage(attackDamage);
-                }
-                else
-                {
-                    Debug.LogWarning("Enemy object is missing the Enemy component.");
-                }
+                enemyComponent.takeDamage(_attackDamage);
+            }
+            else
+            {
+                Debug.LogWarning("Enemy object is missing the Enemy component.");
             }
         }
-
-
+    }
+    
     private void OnDrawGizmosSelected()
     {
-        if (attackPoint == null)
+        if (_attackPoint == null)
             return;
         
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        Gizmos.DrawWireSphere(_attackPoint.position, attackRange);
     }
 }

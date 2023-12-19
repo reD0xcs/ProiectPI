@@ -1,8 +1,9 @@
-using System.Collections;
 using UnityEngine;
 
 public class Enemy_behivour : MonoBehaviour
 {
+    #region Public Variables
+
     public Transform rayCast;
     public LayerMask reycastMask;
     public float rayCastLenght;
@@ -12,23 +13,28 @@ public class Enemy_behivour : MonoBehaviour
     public Transform enemyAttackPoint; 
     public ScreenFlash screenFlash;
 
-    private RaycastHit2D hit;
-    private GameObject target;
-    private Animator anim;
-    private float distance;
-    private bool attackMode;
-    private bool inRange;
-    private bool cooling;
-    private float intTimer;
-    private bool canAttack = true;
-    private bool isUnderPlayerAttack = false;
+    #endregion
+
+    #region Private Variables
+
+    private RaycastHit2D _hit;
+    private GameObject _target;
+    private Animator _anim;
+    private float _distance;
+    private bool _attackMode;
+    private bool _inRange;
+    private bool _cooling;
+    private float _intTimer;
+    private bool _canAttack = true;
+    private bool _isUnderPlayerAttack = false;
     [SerializeField] private AudioSource attackSound;
 
+    #endregion
     
     void Awake()
     {
-        intTimer = timer;
-        anim = GetComponent<Animator>();
+        _intTimer = timer;
+        _anim = GetComponent<Animator>();
     }
 
     void Start()
@@ -38,24 +44,24 @@ public class Enemy_behivour : MonoBehaviour
     
     void Update()
     {
-        if (inRange)
+        if (_inRange)
         {
-            hit = Physics2D.Raycast(rayCast.position, Vector2.left, rayCastLenght, reycastMask);
+            _hit = Physics2D.Raycast(rayCast.position, Vector2.left, rayCastLenght, reycastMask);
             RaycastDebugger();
         }
 
-        if (hit.collider != null)
+        if (_hit.collider != null)
         {
             EnemyLogic();
         }
-        else if (hit.collider == null)
+        else if (_hit.collider == null)
         {
-            inRange = false;
+            _inRange = false;
         }
 
-        if (inRange == false)
+        if (_inRange == false)
         {
-            anim.SetBool("canWalk", false);
+            _anim.SetBool("canWalk", false);
             StopAttack();
         }
     }
@@ -64,39 +70,39 @@ public class Enemy_behivour : MonoBehaviour
     {
         if (trig.gameObject.tag == "Player")
         {
-            target = trig.gameObject;
-            inRange = true;
+            _target = trig.gameObject;
+            _inRange = true;
         }
     }
 
     void EnemyLogic()
     {
-        distance = Vector2.Distance(transform.position, target.transform.position);
+        _distance = Vector2.Distance(transform.position, _target.transform.position);
 
-        if (distance > attackDistance)
+        if (_distance > attackDistance)
         {
             Move();
             StopAttack();
         }
-        else if (attackDistance >= distance && cooling == false)
+        else if (attackDistance >= _distance && _cooling == false)
         {
             Attack();
         }
 
-        if (cooling)
+        if (_cooling)
         {
             Cooldown();
-            anim.SetBool("Attack", false);
+            _anim.SetBool("Attack", false);
         }
     }
 
     void Move()
     {
-        anim.SetBool("canWalk", true);
+        _anim.SetBool("canWalk", true);
 
-        if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Enemy_attack"))
+        if (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Enemy_attack"))
         {
-            Vector2 targetPosition = new Vector2(target.transform.position.x, transform.position.y);
+            Vector2 targetPosition = new Vector2(_target.transform.position.x, transform.position.y);
 
             transform.position = Vector2.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
         }
@@ -104,34 +110,34 @@ public class Enemy_behivour : MonoBehaviour
 
     void Attack()
     {
-        timer = intTimer;
-        attackMode = true;
+        timer = _intTimer;
+        _attackMode = true;
 
-        anim.SetBool("canWalk", false);
-        anim.SetBool("Attack", true);
+        _anim.SetBool("canWalk", false);
+        _anim.SetBool("Attack", true);
     }
 
     void Cooldown()
     {
         timer -= Time.deltaTime;
 
-        if (timer <= 0 && cooling && attackMode)
+        if (timer <= 0 && _cooling && _attackMode)
         {
-            cooling = false;
-            timer = intTimer;
+            _cooling = false;
+            timer = _intTimer;
         }
     }
 
     void StopAttack()
     {
-        cooling = false;
-        attackMode = false;
-        anim.SetBool("Attack", false);
+        _cooling = false;
+        _attackMode = false;
+        _anim.SetBool("Attack", false);
     }
 
     void RaycastDebugger()
     {
-        if (distance > attackDistance)
+        if (_distance > attackDistance)
         {
             Debug.DrawRay(rayCast.position, Vector2.left * rayCastLenght, Color.green);
         }
@@ -139,16 +145,16 @@ public class Enemy_behivour : MonoBehaviour
 
     public void TriggerCooling()
     {
-        cooling = true;
+        _cooling = true;
     }
     
     public void TriggerAttack()
     {
-        if (inRange)
+        if (_inRange)
         {
-            if (enemyAttackPoint != null && distance <= attackDistance)
+            if (enemyAttackPoint != null && _distance <= attackDistance)
             {
-                PlayerLife playerLife = target.GetComponent<PlayerLife>();
+                PlayerLife playerLife = _target.GetComponent<PlayerLife>();
                 if (playerLife != null)
                 {
                     // Take damage from enemy attacks

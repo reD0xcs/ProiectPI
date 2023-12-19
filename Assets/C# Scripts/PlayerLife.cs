@@ -3,32 +3,37 @@ using UnityEngine.SceneManagement;
 
 public class PlayerLife : MonoBehaviour
 {
-    private Rigidbody2D rb;
-    private Animator anim;
-    
-    [SerializeField] private AudioSource deathSoundEffect;
+    #region Public Variables
 
     public int maxHealth = 100;
-    private int currentHealth;
-    
     public ScreenFlash screenFlash;
-    
     public float resetTime = 5f;
-    private float timeSinceLastDamage = 0f;
 
+    #endregion
+
+    #region Private Variables
+
+    private Rigidbody2D _rb;
+    private Animator _anim;
+    [SerializeField] private AudioSource deathSoundEffect;
+    private int _currentHealth;
+    private float _timeSinceLastDamage;
+
+    #endregion
+    
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
+        _rb = GetComponent<Rigidbody2D>();
+        _anim = GetComponent<Animator>();
         screenFlash = GetComponent<ScreenFlash>();
-        currentHealth = maxHealth;
+        _currentHealth = maxHealth;
     }
 
     private void Update()
     {
-        timeSinceLastDamage += Time.deltaTime;
+        _timeSinceLastDamage += Time.deltaTime;
         
-        if (timeSinceLastDamage >= resetTime && currentHealth != 100)
+        if (_timeSinceLastDamage >= resetTime && _currentHealth != 100)
         {
             screenFlash.FlashGreen();
             ResetHealth();
@@ -45,25 +50,25 @@ public class PlayerLife : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        currentHealth -= damage;
-        anim.SetTrigger("hurt");
+        _currentHealth -= damage;
+        _anim.SetTrigger("hurt");
 
-        if (currentHealth <= 0)
+        if (_currentHealth <= 0)
         {
             Die();
         }
         else
         {
-            anim.SetTrigger("hurt");
-            timeSinceLastDamage = 0f;
+            _anim.SetTrigger("hurt");
+            _timeSinceLastDamage = 0f;
         }
     }
 
     private void Die()
     {
         deathSoundEffect.Play();
-        rb.bodyType = RigidbodyType2D.Static;
-        anim.SetTrigger("death");
+        _rb.bodyType = RigidbodyType2D.Static;
+        _anim.SetTrigger("death");
         Debug.Log("Player died!");
 
         Invoke("RestartLevel", 2f);
@@ -77,7 +82,7 @@ public class PlayerLife : MonoBehaviour
     private void ResetHealth()
     {
         // Reset the health to max
-        currentHealth = maxHealth;
+        _currentHealth = maxHealth;
         Debug.Log("Player health reset to " + maxHealth);
     }
 }

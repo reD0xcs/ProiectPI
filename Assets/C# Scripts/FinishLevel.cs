@@ -1,24 +1,26 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class FinishLevel : MonoBehaviour
 {
-    private AudioSource finishSound;
-    private bool levelCompleted = false;
+    #region Private Variables
+
+    private AudioSource _finishSound;
+    private bool _levelCompleted = false;
+
+    #endregion
+    
     private void Start()
     {
-        finishSound = GetComponent<AudioSource>();
+        _finishSound = GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.name == "player" && !levelCompleted)
+        if (collision.gameObject.name == "player" && !_levelCompleted)
         {
-            finishSound.Play();
-            levelCompleted = true;
+            _finishSound.Play();
+            _levelCompleted = true;
             Invoke("CompleteLevel", 2f);
         }
     }
